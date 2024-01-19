@@ -1,0 +1,114 @@
+﻿@{
+    ViewData["Title"] = "Personnel";
+}
+@model FilteredListViewModel
+<h1>@ViewData["Title"]</h1>
+
+<div class="container mb-2">
+    @using (Html.BeginForm())
+    {
+        <div class="form-row mb-5">
+            <div class="col">
+                @Html.LabelFor(model => model.NameFilter)
+                @Html.EditorFor(model => model.NameFilter, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="col">
+                @Html.LabelFor(model => model.AddressFilter)
+                @Html.EditorFor(model => model.AddressFilter, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="col">
+                @Html.LabelFor(model => model.PhoneNumberFilter)
+                @Html.EditorFor(model => model.PhoneNumberFilter, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-row mb-2">
+            <div class="col">
+                @Html.LabelFor(model => model.BirthdayMonthFilter)
+                @Html.DropDownListFor(model => model.BirthdayMonthFilter, Model.BirthdayMonthList, "--Select Month--", new { @class = "form-control" })
+            </div>
+            <div class="col">
+                @Html.LabelFor(model => model.HireDateFromFilter)
+                @Html.EditorFor(model => model.HireDateFromFilter, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="col">
+                @Html.LabelFor(model => model.HireDateToFilter)
+                @Html.EditorFor(model => model.HireDateToFilter, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-row mb-2">
+            <div class="col">
+                @Html.LabelFor(model => model.SalaryFromFilter)
+                @Html.EditorFor(model => model.SalaryFromFilter, new { htmlAttributes = new { @class = "form-control", @type = "number", @max = Model.MaximumSalary, @min = "0" } })
+                @*<input type="range" class="form-range" id="customRange1">*@
+            </div>
+            <div class="col">
+                @Html.LabelFor(model => model.SalaryToFilter)
+                @Html.EditorFor(model => model.SalaryToFilter, new { htmlAttributes = new { @class = "form-control", @type = "number", @max = Model.MaximumSalary, @min = "0" } })
+            </div>
+        </div>
+        <div class="form-row mb-2">
+            <div class="col">
+                @Html.LabelFor(model => model.PositionIDFilter)
+                @Html.DropDownListFor(model => model.PositionIDFilter, Model.PositionsList, "--Select Position--", htmlAttributes: new { @class = "form-control" })
+            </div>
+            <div class="col">
+                @Html.LabelFor(model => model.DepartmentIDFilter)
+                @Html.DropDownListFor(model => model.DepartmentIDFilter, Model.DepartmetnsList, "--Select Department--", htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-row mb-2">
+            <div class="col-2">
+                <input type="submit" value="Apply Filter" class="btn btn-outline-primary" asp-action="Index" formmethod="get" />
+                @Html.ActionLink("Clear Filter", "Index", new object { }, new { @class = "btn btn-default" })
+            </div>
+        </div>
+    }
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Full Name</th>
+            <th scope="col">Address</th>
+            <th scope="col">Phone Number</th>
+            <th scope="col">Birthday</th>
+            <th scope="col">Hiring Date</th>
+            <th scope="col">Salary</th>
+            <th scope="col">Department</th>
+            <th scope="col">Position</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Data)
+        {
+            <tr>
+                <!--style="cursor:pointer;" onclick="window.location = 'Personnel/Person/@item.ID'"-->
+                <td>@item.FullName</td>
+                <td>@item.Address</td>
+                <td>@item.PhoneNumber</td>
+                <td>@item.Birthday.ToString("dd/MM/yyyy")</td>
+                <td>@item.HiringDate.ToString("dd/MM/yyyy")</td>
+                <td>@item.Salary</td>
+                <td>@item.Department</td>
+                <td>@item.Position</td>
+                <td>
+                    @Html.ActionLink("Edit", "Person", new { id = item.ID })
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td />
+            <td colspan="4">Sum of Salaries</td>
+            <td>@ViewBag.Sum</td>
+            <td colspan="3"></td>
+        </tr>
+    </tfoot>
+</table>
+
+<form method="post" asp-action="Export">
+    @Html.HiddenFor(model => model.SessionID)
+    <input type="submit" value="Export" class="btn btn-link"/>
+</form>
